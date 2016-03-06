@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:tx="http://www.springframework.org/schema/tx"
+	xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:mvc="http://www.springframework.org/schema/mvc"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans
+	http://www.springframework.org/schema/beans/spring-beans.xsd
+	http://www.springframework.org/schema/tx
+	http://www.springframework.org/schema/tx/spirng-tx.xsd
+	http://www.springframework.org/schema/context
+	http://www.springframework.org/schema/context/spring-context.xsd
+	http://www.springframework.org/schema/mvc
+	http://www.springframework.org/schema/mvc/spring-mvc.xsd">
+
+	<!-- Component scan -->
+	<context:component-scan base-package="org.dy.springmvc"
+		use-default-filters="false">
+		<context:include-filter type="regex"
+			expression="org.dy.springmvc.controller.*" />
+		<context:include-filter type="regex"
+			expression="org.dy.springmvc.service.*" />
+		<context:include-filter type="regex"
+			expression="org.dy.springmvc.dao.*" />
+	</context:component-scan>
+
+	<mvc:annotation-driven />
+
+	<bean class="org.springframework.web.servlet.view.BeanNameViewResolver">
+		<property name="order" value="1" />
+	</bean>
+	<bean id="jsonView" class="org.dy.springmvc.util.JsonView" />
+
+	<!-- log intercetor -->
+	<bean id="logInterceptor" class="org.dy.springmvc.interceptor.LogInterceptor" />
+	<bean id="logIntercetorProxy"
+		class="org.springframework.aop.framework.autoproxy.BeanNameAutoProxyCreator">
+		<property name="beanNames">
+			<list>
+				<value>*Controller</value>
+				<value>*ServiceImpl</value>
+				<value>*DaoImpl</value>
+			</list>
+		</property>
+		<property name="interceptorNames">
+			<value>logInterceptor</value>
+		</property>
+	</bean>
+
+	<mvc:resources location="/public/images/" mapping="/public/images/**" />
+	<mvc:resources location="/public/css/" mapping="/public/css/**" />
+	<mvc:resources location="/public/js/" mapping="/public/js/**" />
+
+	<bean id="viewResolverCommon"
+		class="org.springframework.web.servlet.view.InternalResourceViewResolver">
+		<property name="viewClass"
+			value="org.springframework.web.servlet.view.InternalResourceView" />
+		<property name="prefix" value="/pages/" />
+	</bean>
+
+	<bean id="multipartResolver"
+		class="org.springframework.web.multipart.commons.CommonsMultipartResolver">
+		<property name="defaultEncoding" value="UTF-8" />
+	</bean>
+
+	<import resource="applicationContext.xml" />
+</beans>	
